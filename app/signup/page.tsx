@@ -1,8 +1,8 @@
-import LoginForm from "@/app/components/LoginForm";
+import SignUpForm from "@/app/components/SignUpForm";
 
 export const dynamic = "force-dynamic";
 
-export default function LoginPage() {
+export default function SignUpPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#e8ecf8] via-[#f0f2f8] to-[#e4e9f5] px-4 py-8">
       {/* Background decoration */}
@@ -30,17 +30,15 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold tracking-tight text-text-primary">
           GRUP HİRDAVAT
         </h1>
-        <p className="text-sm text-text-secondary mt-1">
-          Uç Fiyat Hesaplama Sistemi
-        </p>
+        <p className="text-sm text-text-secondary mt-1">Yeni Hesap Oluştur</p>
       </div>
 
-      {/* Login Card */}
+      {/* Sign Up Card */}
       <div
         className="relative z-10 w-full max-w-[420px] bg-surface rounded-2xl shadow-xl shadow-black/5 border border-border-light p-8 animate-fade-in"
         style={{ animationDelay: "0.1s" }}
       >
-        <LoginForm />
+        <SignUpForm />
       </div>
 
       {/* Footer */}
