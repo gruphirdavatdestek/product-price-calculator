@@ -38,72 +38,16 @@ export default function Navbar() {
         </div>
 
         <nav className="hidden md:flex items-center gap-1">
-          {["Dashboard", "Analitik", "Projeler", "Stok"].map((item, i) => (
-            <button
-              key={item}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors cursor-pointer ${
-                i === 1
-                  ? "text-primary font-semibold"
-                  : "text-text-secondary hover:text-text-primary hover:bg-surface-alt"
-              }`}
-            >
-              {item}
-            </button>
-          ))}
+          <button
+            className="px-3 py-1.5 text-sm rounded-md transition-colors cursor-pointer text-primary font-semibold"
+          >
+            Dashboard
+          </button>
         </nav>
       </div>
 
       {/* Right — Search + Actions */}
       <div className="flex items-center gap-3">
-        <div className="hidden sm:flex items-center gap-2 bg-surface-alt border border-border rounded-lg px-3 py-2">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-text-muted"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Ara..."
-            className="bg-transparent text-sm text-text-primary placeholder:text-text-muted w-32 focus:w-48 transition-all duration-200 border-none outline-none"
-          />
-        </div>
-
-        <button className="p-2 text-text-secondary hover:text-text-primary hover:bg-surface-alt rounded-lg transition-colors cursor-pointer relative">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-          </svg>
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full" />
-        </button>
-
-        <button className="p-2 text-text-secondary hover:text-text-primary hover:bg-surface-alt rounded-lg transition-colors cursor-pointer">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-        </button>
-
         {/* Avatar / Logout */}
         <button
           onClick={handleLogout}
