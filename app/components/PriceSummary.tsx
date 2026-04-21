@@ -5,16 +5,22 @@ import {
   type CoatingType,
   COATING_LABELS,
 } from "@/lib/pricing";
+import { type SalesConfig } from "@/lib/config-api";
 
 interface PriceSummaryProps {
   breakdown: PriceBreakdown | null;
   toolLabel: string;
+  salesConfig?: SalesConfig;
+  isAdmin?: boolean;
 }
 
 export default function PriceSummary({
   breakdown,
   toolLabel,
+  salesConfig,
+  isAdmin = false,
 }: PriceSummaryProps) {
+  const blurClass = !isAdmin ? "blur-[5px] select-none pointer-events-none" : "";
   return (
     <div className="bg-surface rounded-xl border border-border p-6 space-y-5">
       {/* Header */}
@@ -48,7 +54,7 @@ export default function PriceSummary({
                   <span className="text-sm text-blue-700 font-medium">
                     Hammadde
                   </span>
-                  <span className="text-sm font-semibold text-blue-900">
+                  <span className={`text-sm font-semibold text-blue-900 ${blurClass}`}>
                     €{breakdown.rawMaterialCost.toFixed(2)}
                   </span>
                 </div>
@@ -58,7 +64,7 @@ export default function PriceSummary({
                 <span className="text-sm text-indigo-700 font-medium">
                   Bileme
                 </span>
-                <span className="text-sm font-semibold text-indigo-900">
+                <span className={`text-sm font-semibold text-indigo-900 ${blurClass}`}>
                   €{breakdown.bilemeCost}
                 </span>
               </div>
@@ -70,10 +76,10 @@ export default function PriceSummary({
                 >
                   <span className="text-sm text-text-secondary">
                     {COATING_LABELS[coating.name as CoatingType] ||
-                      coating.name}{" "}
+                      coating.name.replace(/_/g, ' ').toUpperCase()}{" "}
                     Kaplama
                   </span>
-                  <span className="text-sm font-semibold text-text-primary">
+                  <span className={`text-sm font-semibold text-text-primary ${blurClass}`}>
                     €{coating.surcharge.toFixed(2)}
                   </span>
                 </div>
@@ -87,7 +93,7 @@ export default function PriceSummary({
                   <span className="text-sm text-orange-700 font-medium">
                     {extra.name} Farkı
                   </span>
-                  <span className="text-sm font-semibold text-orange-900">
+                  <span className={`text-sm font-semibold text-orange-900 ${blurClass}`}>
                     €{extra.surcharge.toFixed(2)}
                   </span>
                 </div>
@@ -101,7 +107,7 @@ export default function PriceSummary({
               Toplam Maliyet
             </p>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-semibold text-text-primary">
+              <span className={`text-2xl font-semibold text-text-primary ${blurClass}`}>
                 €{breakdown.finalPrice.toFixed(2)}
               </span>
               <span className="text-sm text-text-muted">EUR</span>
@@ -114,8 +120,8 @@ export default function PriceSummary({
               <span className="text-sm font-medium text-slate-600">
                 Min. Satış Bedeli
               </span>
-              <span className="text-lg font-bold text-slate-900">
-                €{(breakdown.finalPrice * 1.2).toFixed(2)}
+              <span className={`text-lg font-bold text-slate-900 ${blurClass}`}>
+                €{(breakdown.finalPrice * (salesConfig?.min_multiplier || 1.2)).toFixed(2)}
               </span>
             </div>
 
@@ -124,7 +130,7 @@ export default function PriceSummary({
                 Peşin Satış Fiyatı
               </span>
               <span className="text-lg font-bold text-green-800">
-                €{(breakdown.finalPrice * 1.4).toFixed(2)}
+                €{(breakdown.finalPrice * (salesConfig?.cash_multiplier || 1.4)).toFixed(2)}
               </span>
             </div>
 
@@ -133,7 +139,7 @@ export default function PriceSummary({
                 Vadeli Satış Fiyatı
               </span>
               <span className="text-lg font-bold text-blue-800">
-                €{(breakdown.finalPrice * 1.8).toFixed(2)}
+                €{(breakdown.finalPrice * (salesConfig?.credit_multiplier || 1.8)).toFixed(2)}
               </span>
             </div>
           </div>

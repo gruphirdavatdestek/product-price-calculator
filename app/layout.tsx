@@ -8,9 +8,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Grup Hirdavat — Uç Fiyat Hesaplama",
+  title: "DJ Plus — Uç Fiyat Hesaplama",
   description:
-    "Hırdavat ürünleri için uç fiyat hesaplama ve sipariş yönetim sistemi",
+    "DJ Plus hırdavat ürünleri için uç fiyat hesaplama ve sipariş yönetim sistemi",
+  icons: {
+    icon: "/dj-plus-logo.png",
+    apple: "/dj-plus-logo.png",
+  }
 };
 
 export default function RootLayout({

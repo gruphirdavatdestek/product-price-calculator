@@ -1,56 +1,16 @@
 import { getCoatingPrice } from "./coating-price";
+import { type FullPricingConfig, type HammaddeConfig } from "./config-api";
 
 // Uç Fiyat Hesaplama Mantığı
 
 export type ToolType = "drill" | "milling" | "reamer" | "tapping";
 export type MaterialType = "hss" | "carbide" | "cobalt";
 export type CoatingType =
-  | "super_tin"
   | "zafir_plus"
   | "oniks"
   | "preventa"
   | "alterna"
   | "preventa_rainbow";
-
-export const SUBTYPE_MULTIPLIERS: Record<ToolType, Record<string, number>> = {
-  drill: {
-    Standart: 1.0,
-    Alu: 1.1,
-    "Çift Zırhlı": 1.2,
-    Z3: 1.5,
-  },
-  milling: {
-    Düz: 1.0,
-    Küre: 1.12,
-    Chatter: 1.15,
-    "Alu Z1": 1.2,
-    "Alu Z2-Z3": 1.1,
-    "Çok Ağızlı": 1.3,
-    Kabatalaş: 1.3,
-  },
-  reamer: {
-    Standart: 1.0,
-    Alu: 1.2,
-  },
-  tapping: {
-    Standart: 1.0,
-    Alu: 1.2,
-    "Çapraz diş": 1.3,
-  },
-};
-
-/**
- * Admin tarafından değiştirilebilecek hammadde birim fiyatları
- */
-export const HHAMMADDE_CONFIG = {
-  ROD_LENGTH: 330, // Standart çubuk boyu (mm)
-  DENSITY_FACTOR: 0.0145, // Yoğunluk katsayısı (Karbür için yaklaşık)
-  PRICES: [
-    { maxWeight: 6.0001, pricePerKg: 330 }, // 6 kg ve altı
-    { maxWeight: 12, pricePerKg: 300 }, // 6 - 12 kg arası (6 dahil değil)
-    { maxWeight: Infinity, pricePerKg: 280 }, // 12 kg ve üstü (12 dahil)
-  ],
-};
 
 /**
  * Üretim için hammadde maliyetini hesaplayan fonksiyon.
@@ -59,11 +19,16 @@ export const HHAMMADDE_CONFIG = {
 export function calculateRawMaterialCost(
   shankDiameter: number,
   totalLength: number,
+  config?: HammaddeConfig,
 ): number {
-  if (!shankDiameter || !totalLength || totalLength <= 0) return 0;
+  if (!shankDiameter || !totalLength || totalLength <= 0 || !config) return 0;
 
   const radius = shankDiameter / 2;
-  const piecesPerRod = Math.floor(HHAMMADDE_CONFIG.ROD_LENGTH / totalLength);
+  const rodLength = config.ROD_LENGTH || 330;
+  const density = config.DENSITY_FACTOR || 0.0145;
+  const prices = config.PRICES || [];
+
+  const piecesPerRod = Math.floor(rodLength / totalLength);
 
   // Eğer parça boyu çubuktan büyükse en az 1 parça maliyeti üzerinden devam et
   const effectivePieces = piecesPerRod > 0 ? piecesPerRod : 1;
@@ -73,16 +38,16 @@ export function calculateRawMaterialCost(
     3.14 *
     radius *
     radius *
-    HHAMMADDE_CONFIG.ROD_LENGTH *
-    HHAMMADDE_CONFIG.DENSITY_FACTOR;
+    rodLength *
+    density;
   const weightPerToolGrams = totalRodWeightGrams / effectivePieces;
 
   // 2. Kilogram Hesabı (x)
   const x_kg = weightPerToolGrams / 1000;
 
   // 3. Fiyatlandırma (Hangi aralığa giriyorsa o birim fiyatla çarpılır)
-  const config = HHAMMADDE_CONFIG.PRICES.find((p) => x_kg < p.maxWeight);
-  const unitPrice = config ? config.pricePerKg : 280;
+  const priceTier = prices.find((p) => x_kg < p.maxWeight);
+  const unitPrice = priceTier ? priceTier.pricePerKg : 280;
 
   const finalCost = x_kg * unitPrice;
 
@@ -142,10 +107,14 @@ const EXTRA_SURCHARGES: Record<string, number> = {
   Polisaj: 0.1, // %10 ek ücret
 };
 
-export function calculatePrice(params: PriceParams): PriceBreakdown {
+export function calculatePrice(
+  params: PriceParams,
+  config: FullPricingConfig,
+): PriceBreakdown {
   const rawMaterialCost = calculateRawMaterialCost(
     params.shankDiameter,
     params.totalLength,
+    config.hammadde,
   );
 
   // Sadece hammadde maliyeti üzerinden hesaplama (İşçilik/Baz fiyat kaldırıldı)
@@ -160,6 +129,7 @@ export function calculatePrice(params: PriceParams): PriceBreakdown {
               params.diameter,
               params.totalLength,
               params.coatings,
+              config.coatings,
             ) || 0,
         },
       ]
@@ -232,7 +202,7 @@ export function calculatePrice(params: PriceParams): PriceBreakdown {
     0,
   );
 
-  const multipliersForTool = SUBTYPE_MULTIPLIERS[params.toolType];
+  const multipliersForTool = config?.multipliers?.[params.toolType] || {};
   const defaultSub = params.toolType === "milling" ? "Düz" : "Standart";
   const multiplier = multipliersForTool[params.subType || defaultSub] || 1.0;
 
@@ -297,7 +267,6 @@ export const MATERIAL_LABELS: Record<MaterialType, string> = {
 };
 
 export const COATING_LABELS: Record<CoatingType, string> = {
-  super_tin: "Super TiN",
   zafir_plus: "Zafir Plus",
   oniks: "Oniks",
   preventa: "Preventa",
