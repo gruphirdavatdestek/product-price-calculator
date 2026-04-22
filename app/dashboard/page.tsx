@@ -23,10 +23,7 @@ import {
 } from "@/lib/pricing";
 import { fetchPricingConfig, type FullPricingConfig } from "@/lib/config-api";
 
-import DrillDiagram from "@/app/components/diagrams/DrillDiagram";
-import MillingDiagram from "@/app/components/diagrams/MillingDiagram";
-import ReamerDiagram from "@/app/components/diagrams/ReamerDiagram";
-import TappingDiagram from "@/app/components/diagrams/TappingDiagram";
+import StaticImageDiagram from "@/app/components/diagrams/StaticImageDiagram";
 
 export default function DashboardPage() {
   const [toolType, setToolType] = useState<ToolType>("milling");
@@ -41,7 +38,7 @@ export default function DashboardPage() {
   }>({ type: null, diameter: "", length: "" });
   const [dimensions, setDimensions] = useState({
     foreDiameter: "12",
-    shankDiameter: "10",
+    shankDiameter: "12",
     totalLength: "100",
     fluteLength: "50",
   });
@@ -85,8 +82,10 @@ export default function DashboardPage() {
     const l2 = parseFloat(dimensions.fluteLength) || 0;
 
     // Validation
-    if (d1 <= d2) {
-      setValidationError("Ön Çap (d1), Arka Çap'tan (d2) büyük olmalıdır.");
+    if (d2 < d1) {
+      setValidationError(
+        "Arka Çap (d2), Ön Çap'tan (d1) büyük veya eşit olmalıdır.",
+      );
       setPriceBreakdown(null);
       return;
     }
@@ -143,35 +142,6 @@ export default function DashboardPage() {
     );
   };
 
-  const renderDiagram = () => {
-    switch (toolType) {
-      case "drill":
-        return (
-          <DrillDiagram values={dimensions} onChange={handleDimensionChange} />
-        );
-      case "milling":
-        return (
-          <MillingDiagram
-            values={dimensions}
-            onChange={handleDimensionChange}
-          />
-        );
-      case "reamer":
-        return (
-          <ReamerDiagram values={dimensions} onChange={handleDimensionChange} />
-        );
-      case "tapping":
-        return (
-          <TappingDiagram
-            values={dimensions}
-            onChange={handleDimensionChange}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-4 md:py-6">
       <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
@@ -217,21 +187,38 @@ export default function DashboardPage() {
             </div>
 
             {/* Visual Diagram */}
-            <div className="mb-0">{renderDiagram()}</div>
+            <div className="mb-0">
+              <StaticImageDiagram
+                toolType={toolType}
+                values={dimensions}
+                onChange={handleDimensionChange}
+              />
+            </div>
 
             {/* Validation Error */}
             {validationError && (
               <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3 animate-in fade-in zoom-in duration-300">
                 <div className="p-2 bg-red-100 rounded-xl text-red-600">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <line x1="12" y1="8" x2="12" y2="12" />
                     <line x1="12" y1="16" x2="12.01" y2="16" />
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-red-900">Geçersiz Ölçü</h4>
-                  <p className="text-xs text-red-700 font-medium">{validationError}</p>
+                  <h4 className="text-sm font-bold text-red-900">
+                    Geçersiz Ölçü
+                  </h4>
+                  <p className="text-xs text-red-700 font-medium">
+                    {validationError}
+                  </p>
                 </div>
               </div>
             )}
@@ -244,15 +231,16 @@ export default function DashboardPage() {
                   Ürün Tipi
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {Object.keys(pricingConfig?.multipliers?.[toolType] || (
-                    toolType === "drill"
-                      ? DRILL_SUBTYPES
-                      : toolType === "milling"
-                        ? MILLING_SUBTYPES
-                        : toolType === "reamer"
-                          ? REAMER_SUBTYPES
-                          : TAPPING_SUBTYPES
-                  )).map((type) => (
+                  {Object.keys(
+                    pricingConfig?.multipliers?.[toolType] ||
+                      (toolType === "drill"
+                        ? DRILL_SUBTYPES
+                        : toolType === "milling"
+                          ? MILLING_SUBTYPES
+                          : toolType === "reamer"
+                            ? REAMER_SUBTYPES
+                            : TAPPING_SUBTYPES),
+                  ).map((type) => (
                     <button
                       key={type}
                       onClick={() => setSubType(type)}
@@ -384,7 +372,14 @@ export default function DashboardPage() {
               <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
               <div className="flex items-center gap-2 mb-3">
                 <div className="p-1.5 bg-white/20 rounded-lg">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 16v-4M12 8h.01" />
                   </svg>

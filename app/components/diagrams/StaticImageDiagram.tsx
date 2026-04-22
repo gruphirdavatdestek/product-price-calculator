@@ -26,25 +26,25 @@ const IMAGE_MAP: Record<ToolType, string> = {
  */
 const LABEL_MAP: Record<ToolType, Record<string, string>> = {
   drill: {
-    foreDiameter: "Çap (D)",
+    foreDiameter: "Ön Çap (D)",
     shankDiameter: "Arka Çap (D)",
     fluteLength: "Helis Boyu (l)",
     totalLength: "Tam Boy (L)",
   },
   milling: {
-    foreDiameter: "Kesme Çapı (d)",
+    foreDiameter: "Ön Çap (d)",
     shankDiameter: "Arka Çap (D)",
     fluteLength: "Helis Boyu (L1)",
     totalLength: "Tam Boy (L)",
   },
   reamer: {
-    foreDiameter: "Kesme Çapı (D)",
+    foreDiameter: "Ön Çap (D)",
     shankDiameter: "Arka Çap (D1)",
     fluteLength: "Helis Boyu (L1)",
     totalLength: "Tam Boy (L)",
   },
   tapping: {
-    foreDiameter: "Kafa Çapı (d1)",
+    foreDiameter: "Ön Çap (d1)",
     shankDiameter: "Arka Çap (d2)",
     fluteLength: "Kafa Kalınlığı (b)",
     totalLength: "Tam Boy (L1)",
@@ -68,11 +68,12 @@ export default function StaticImageDiagram({
           fill
           className="object-contain p-2"
           priority
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
 
       {/* Input Grid - Unified for all viewports */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-10">
         <DimensionInput
           label={labels.foreDiameter}
           value={values.foreDiameter}
