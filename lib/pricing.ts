@@ -245,7 +245,7 @@ export const TOOL_LABELS: Record<
   tapping: { tr: "T Freze", en: "T Freze", desc: "İç diş açma sistemleri" },
 };
 
-export const DRILL_SUBTYPES = ["Standart", "Alu", "Çift Zırhlı", "Z3"];
+export const DRILL_SUBTYPES = ["Standart", "Alu", "Çift Zırhlı", "Z3", "NC Matkap"];
 export const MILLING_SUBTYPES = [
   "Düz",
   "Küre",
@@ -254,6 +254,8 @@ export const MILLING_SUBTYPES = [
   "Alu Z2-Z3",
   "Çok Ağızlı",
   "Kabatalaş",
+  "Küre Z4",
+  "Pah Frezesi",
 ];
 export const REAMER_SUBTYPES = ["Standart", "Alu"];
 export const TAPPING_SUBTYPES = ["Standart", "Alu", "Çapraz diş"];

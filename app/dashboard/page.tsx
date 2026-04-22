@@ -244,14 +244,15 @@ export default function DashboardPage() {
                   Ürün Tipi
                 </label>
                 <div className="flex flex-wrap gap-2">
-                  {(toolType === "drill"
-                    ? DRILL_SUBTYPES
-                    : toolType === "milling"
-                      ? MILLING_SUBTYPES
-                      : toolType === "reamer"
-                        ? REAMER_SUBTYPES
-                        : TAPPING_SUBTYPES
-                  ).map((type) => (
+                  {Object.keys(pricingConfig?.multipliers?.[toolType] || (
+                    toolType === "drill"
+                      ? DRILL_SUBTYPES
+                      : toolType === "milling"
+                        ? MILLING_SUBTYPES
+                        : toolType === "reamer"
+                          ? REAMER_SUBTYPES
+                          : TAPPING_SUBTYPES
+                  )).map((type) => (
                     <button
                       key={type}
                       onClick={() => setSubType(type)}

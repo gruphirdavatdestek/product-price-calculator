@@ -9,7 +9,7 @@ import { COATING_PRICES } from "@/lib/coating-price";
 
 const DEFAULT_CONFIG: FullPricingConfig = {
   multipliers: {
-    drill: { Standart: 1.0, Alu: 1.1, "Çift Zırhlı": 1.2, Z3: 1.5 },
+    drill: { Standart: 1.0, Alu: 1.1, "Çift Zırhlı": 1.2, Z3: 1.5, "NC Matkap": 1.3 },
     milling: {
       Düz: 1.0,
       Küre: 1.12,
@@ -18,6 +18,8 @@ const DEFAULT_CONFIG: FullPricingConfig = {
       "Alu Z2-Z3": 1.1,
       "Çok Ağızlı": 1.3,
       Kabatalaş: 1.3,
+      "Küre Z4": 1.5,
+      "Pah Frezesi": 1.4,
     },
     reamer: { Standart: 1.0, Alu: 1.2 },
     tapping: { Standart: 1.0, Alu: 1.2, "Çapraz diş": 1.3 },
@@ -67,9 +69,20 @@ export default function AdminPage() {
 
       const remoteConfig = await fetchPricingConfig();
       if (remoteConfig) {
-        // Deep merge with defaults to ensure all keys exist
+        // Deeper merge for multipliers to prevent losing new keys from DEFAULT_CONFIG
+        const mergedMultipliers = { ...DEFAULT_CONFIG.multipliers };
+        if (remoteConfig.multipliers) {
+          Object.keys(remoteConfig.multipliers).forEach((toolKey) => {
+            const tk = toolKey as keyof typeof mergedMultipliers;
+            mergedMultipliers[tk] = {
+              ...(mergedMultipliers[tk] || {}),
+              ...(remoteConfig.multipliers[toolKey] || {}),
+            };
+          });
+        }
+
         setConfig({
-          multipliers: { ...DEFAULT_CONFIG.multipliers, ...remoteConfig.multipliers },
+          multipliers: mergedMultipliers,
           hammadde: { ...DEFAULT_CONFIG.hammadde, ...remoteConfig.hammadde },
           sales: { ...DEFAULT_CONFIG.sales, ...remoteConfig.sales },
           coatings: { ...DEFAULT_CONFIG.coatings, ...remoteConfig.coatings },
