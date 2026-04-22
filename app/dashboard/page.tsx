@@ -89,8 +89,10 @@ export default function DashboardPage() {
       setPriceBreakdown(null);
       return;
     }
-    if (l1 <= l2) {
-      setValidationError("Tam Boy (L), Kesme Boyu'ndan (l) büyük olmalıdır.");
+    if (l1 < l2) {
+      setValidationError(
+        "Tam Boy (L), Kesme Boyu'ndan (l) büyük veya eşit olmalıdır.",
+      );
       setPriceBreakdown(null);
       return;
     }
