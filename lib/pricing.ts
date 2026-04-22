@@ -181,7 +181,7 @@ export function calculatePrice(
   // Taşlama Hesaplaması
   if (params.taslama) {
     const { type, diameter: tDia, length: tLen } = params.taslama;
-    const divisor = type === "Konik" ? 1.75 : 2.0;
+    const divisor = type === "Konik" ? 17.5 : 20.0;
 
     // Formül: (( (Tam Çap - Taşlama Çapı) / 2 )² * Taşlama Boyu) / Bölen
     const diff = (params.diameter - tDia) / 2;
