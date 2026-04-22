@@ -40,7 +40,7 @@ export default function DashboardPage() {
     length: string;
   }>({ type: null, diameter: "", length: "" });
   const [dimensions, setDimensions] = useState({
-    foreDiameter: "10",
+    foreDiameter: "12",
     shankDiameter: "10",
     totalLength: "100",
     fluteLength: "50",

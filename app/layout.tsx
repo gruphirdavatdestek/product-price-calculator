@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/dj-plus-logo.png",
     apple: "/dj-plus-logo.png",
-  }
+  },
 };
 
 export default function RootLayout({
