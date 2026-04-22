@@ -53,6 +53,7 @@ export default function DashboardPage() {
     null,
   );
   const [isUserAdmin, setIsUserAdmin] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   // Load config and auth on mount
   useEffect(() => {
@@ -78,13 +79,32 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!pricingConfig) return;
 
+    const d1 = parseFloat(dimensions.foreDiameter) || 0;
+    const d2 = parseFloat(dimensions.shankDiameter) || 0;
+    const l1 = parseFloat(dimensions.totalLength) || 0;
+    const l2 = parseFloat(dimensions.fluteLength) || 0;
+
+    // Validation
+    if (d1 <= d2) {
+      setValidationError("Ön Çap (d1), Arka Çap'tan (d2) büyük olmalıdır.");
+      setPriceBreakdown(null);
+      return;
+    }
+    if (l1 <= l2) {
+      setValidationError("Tam Boy (L), Kesme Boyu'ndan (l) büyük olmalıdır.");
+      setPriceBreakdown(null);
+      return;
+    }
+
+    setValidationError(null);
+
     const params: PriceParams = {
       toolType,
       material,
-      diameter: parseFloat(dimensions.foreDiameter) || 0,
-      shankDiameter: parseFloat(dimensions.shankDiameter) || 0,
-      totalLength: parseFloat(dimensions.totalLength) || 0,
-      fluteLength: parseFloat(dimensions.fluteLength) || 0,
+      diameter: d1,
+      shankDiameter: d2,
+      totalLength: l1,
+      fluteLength: l2,
       coatings,
       taslama: taslama.type
         ? {
@@ -197,7 +217,24 @@ export default function DashboardPage() {
             </div>
 
             {/* Visual Diagram */}
-            <div className="mb-8">{renderDiagram()}</div>
+            <div className="mb-0">{renderDiagram()}</div>
+
+            {/* Validation Error */}
+            {validationError && (
+              <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3 animate-in fade-in zoom-in duration-300">
+                <div className="p-2 bg-red-100 rounded-xl text-red-600">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-red-900">Geçersiz Ölçü</h4>
+                  <p className="text-xs text-red-700 font-medium">{validationError}</p>
+                </div>
+              </div>
+            )}
 
             {/* Options Configuration */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
